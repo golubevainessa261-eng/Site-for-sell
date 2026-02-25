@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Витрина материалов по английскому</title>
+
+<!-- ======================
+     СТИЛИ
+====================== -->
+<style>
+:root{
+  --bg:#1A1A2E;
+  --card:#222;
+  --accent:#e94560;
+  --accent2:#FFD369;
+  --header:#730606;
+}
+
+body.light{
+  --bg:#f5f6fa;
+  --card:#ffffff;
+  --accent:#e94560;
+  --accent2:#b8860b;
+  --header:#730606;
+  color:#222;
+}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:white;
+}
+
+header{
+  background:var(--header);
+  padding:25px 15px;
+  text-align:center;
+}
+
+.top-controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  padding:15px;
+}
+
+input[type="search"], select{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  min-width:200px;
+}
+
+.toggle-theme{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:22px;
+  padding:25px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
+  transition:.25s;
+}
+
+.card:hover{transform:translateY(-6px);}
+
+.card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+}
+
+.card-content{padding:14px;}
+
+.price{
+  font-size:20px;
+  font-weight:bold;
+  color:var(--accent2);
+}
+
+button.buy{
+  margin-top:10px;
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* ===== МОДАЛКА ===== */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:999;
+}
+
+.modal-content{
+  background:var(--card);
+  max-width:650px;
+  width:100%;
+  border-radius:18px;
+  padding:20px;
+  position:relative;
+}
+
+.close{
+  position:absolute;
+  right:15px;
+  top:8px;
+  font-size:28px;
+  cursor:pointer;
+  z-index:10; /* 🔴 крестик поверх всех элементов */
+  background:rgba(0,0,0,0.5);
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+}
+
+
+.carousel{
+  position:relative;
+  overflow:hidden;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.carousel img{
+  width:100%;
+  height:320px;
+  object-fit:cover;
+}
+
+.carousel button{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(0,0,0,.5);
+  border:none;
+  color:#fff;
+  font-size:22px;
+  padding:6px 10px;
+  cursor:pointer;
+}
+
+.prev{left:10px;} .next{right:10px;}
+
+footer{
+  text-align:center;
+  padding:25px;
+  opacity:.7;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Мои разработки по английскому 🇬🇧</h1>
+  
+</header>
+
+<!-- ======================
+     ПАНЕЛЬ УПРАВЛЕНИЯ
+====================== -->
+<div class="top-controls">
+
+  <!-- 🔴 ПОИСК ПО НАЗВАНИЮ -->
+  <input type="search" id="searchInput" placeholder="Поиск материалов..." oninput="filterProducts()">
+
+  <!-- 🔴 ФИЛЬТР ПО КАТЕГОРИИ -->
+  <select id="categoryFilter" onchange="filterProducts()">
+    <option value="all">Все категории</option>
+    <option value="games">Игры</option>
+    <option value="worksheets">Рабочие листы</option>
+    <option value="presentations">Презентации</option>
+  </select>
+
+  <!-- 🔴 ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ -->
+  <button class="toggle-theme" onclick="toggleTheme()">Сменить тему</button>
+</div>
+
+<!-- ======================
+     ТОВАРЫ
+====================== -->
+<section class="products" id="products">
+
+  <!-- =========================================
+       🔴 ШАБЛОН ТОВАРА — КОПИРУЙТЕ ДЛЯ НОВЫХ
+  ========================================== -->
+  <div class="card"
+       data-category="games"
+       data-title="Animal Memory Game"
+       data-price="200 ₽"
+       data-desc="Интерактивная игра на запоминание животных."
+       data-images="Memory/img1.png,Memory/ima2.png,Memory/img3.png">
+
+    <!-- 🔴 ОБЛОЖКА КАРТОЧКИ -->
+    <img src="https://picsum.photos/400/300?random=1" alt="product">
+
+    <div class="card-content">
+      <h3>Animal Memory Game</h3>
+      <p>Игра для развития памяти.</p>
+      <div class="price">800 ₽</div>
+      <button class="buy" onclick="openModal(this)">Купить</button>
+    </div>
+  </div>
+
+
+  <!-- ===== НОВЫЙ ТОВАР ===== -->
+  <div class="card"
+       data-category="worksheets"
+       data-title="Present Simple Worksheets"
+       data-price="600 ₽"
+       data-desc="Рабочие листы по Present Simple для начальной школы."
+       data-images="https://picsum.photos/600/400?11,https://picsum.photos/600/400?12,https://picsum.photos/600/400?13">
+
+    <img src="https://picsum.photos/400/300?random=22" alt="product">
+
+    <div class="card-content">
+      <h3>Present Simple Worksheets</h3>
+      <p>Рабочие листы для отработки Present Simple.</p>
+      <div class="price">600 ₽</div>
+      <button class="buy" onclick="openModal(this)">Купить</button>
+    </div>
+  </div>
+
+
+  <!-- ===== ТОВАР КАТЕГОРИИ PRESENTATIONS ===== -->
+  <div class="card"
+       data-category="presentations"
+       data-title="My Family Presentation"
+       data-price="700 ₽"
+       data-desc="Красочная презентация по теме My Family."
+       data-images="https://picsum.photos/600/400?21,https://picsum.photos/600/400?22,https://picsum.photos/600/400?23">
+
+    <img src="https://picsum.photos/400/300?random=33" alt="product">
+
+    <div class="card-content">
+      <h3>My Family Presentation</h3>
+      <p>Готовая презентация для урока.</p>
+      <div class="price">700 ₽</div>
+      <button class="buy" onclick="openModal(this)">Купить</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================
+     МОДАЛЬНОЕ ОКНО
+====================== -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">×</span>
+
+    <div class="carousel">
+      <button class="prev" onclick="prevSlide()">❮</button>
+      <img id="modalImage" src="" alt="">
+      <button class="next" onclick="nextSlide()">❯</button>
+    </div>
+
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc"></p>
+    <div class="price" id="modalPrice"></div>
+
+    <!-- 🔴 ВСТАВЬТЕ ССЫЛКУ НА ОПЛАТУ -->
+    <button class="buy" onclick="buyNow()">Купить</button>
+  </div>
+</div>
+
+<footer>© 2026 Все права защищены</footer>
+
+<!-- ======================
+     JAVASCRIPT
+====================== -->
+<script>
+let images=[];
+let currentIndex=0;
+
+/* ===== МОДАЛКА ===== */
+function openModal(btn){
+  const card=btn.closest('.card');
+
+  document.getElementById('modalTitle').textContent=card.dataset.title;
+  document.getElementById('modalDesc').textContent=card.dataset.desc;
+  document.getElementById('modalPrice').textContent=card.dataset.price;
+
+  images=card.dataset.images.split(',');
+  currentIndex=0;
+  document.getElementById('modalImage').src=images[0];
+
+  document.getElementById('modal').style.display='flex';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display='none';
+}
+
+function nextSlide(){
+  currentIndex=(currentIndex+1)%images.length;
+  document.getElementById('modalImage').src=images[currentIndex];
+}
+
+function prevSlide(){
+  currentIndex=(currentIndex-1+images.length)%images.length;
+  document.getElementById('modalImage').src=images[currentIndex];
+}
+
+/* ===== ПОКУПКА ===== */
+function buyNow(){
+  // 🔴 ВСТАВЬТЕ СВОЮ ССЫЛКУ
+  alert('Здесь будет ваша ссылка на оплату');
+}
+
+/* ===== ФИЛЬТР ===== */
+function filterProducts(){
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  const category=document.getElementById('categoryFilter').value;
+  const cards=document.querySelectorAll('.card');
+
+  cards.forEach(card=>{
+    const title=card.dataset.title.toLowerCase();
+    const cat=card.dataset.category;
+
+    const matchSearch=title.includes(search);
+    const matchCat=(category==='all'||category===cat);
+
+    card.style.display=(matchSearch&&matchCat)?'block':'none';
+  });
+}
+
+/* ===== ТЕМА ===== */
+function toggleTheme(){
+  document.body.classList.toggle('light');
+}
+</script>
+
+</body>
+</html>
